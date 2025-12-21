@@ -1,0 +1,8 @@
+{
+  "name": "Copy of CampusRide - Smart Commute",
+  "description": "A unified campus-to-city ride-sharing platform featuring dynamic seating, real-time tracking, and integrated dual-wallets for drivers and passengers.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ]
+}
