@@ -1,120 +1,90 @@
 
-import React from 'react';
-import { Wallet, User, UserRole } from '../types';
-import { Plus, ArrowUpRight, ArrowDownLeft, ShieldCheck, Wallet as WalletIcon, CreditCard, Banknote } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useState } from 'react';
+import { Wallet, Transaction } from '../types';
+import { Plus, CreditCard, Banknote, ArrowDownLeft, ArrowUpRight, ShieldCheck, Loader2, Landmark } from 'lucide-react';
 
 interface WalletViewProps {
   wallet: Wallet;
-  user: User;
+  setWallet: React.Dispatch<React.SetStateAction<Wallet>>;
 }
 
-const WalletView: React.FC<WalletViewProps> = ({ wallet, user }) => {
-  const chartData = [
-    { day: 'Mon', balance: 1200 },
-    { day: 'Tue', balance: 2500 },
-    { day: 'Wed', balance: 2100 },
-    { day: 'Thu', balance: 4200 },
-    { day: 'Fri', balance: 3500 },
-    { day: 'Sat', balance: 5000 },
-    { day: 'Sun', balance: 2500 },
-  ];
+const WalletView: React.FC<WalletViewProps> = ({ wallet, setWallet }) => {
+  const [funding, setFunding] = useState(false);
+
+  const handleAddFunds = () => {
+    setFunding(true);
+    setTimeout(() => {
+      setFunding(false);
+    }, 2000);
+  };
 
   return (
-    <div className="space-y-6">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Financial Hub</h1>
-          <p className="text-gray-500">Manage your {user.role === UserRole.DRIVER ? 'earnings' : 'travel funds'}.</p>
-        </div>
-        <div className="flex gap-2">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-100 rounded-xl text-sm font-bold shadow-sm hover:bg-gray-50 transition-all">
-            <CreditCard size={18} />
-            Withdraw
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all">
-            <Plus size={18} />
-            Add Funds
-          </button>
-        </div>
+    <div className="p-6 space-y-6 animate-in fade-in duration-500 bg-white min-h-full">
+      <header>
+        <h1 className="text-2xl font-black text-gray-900">Wallet</h1>
+        <p className="text-sm text-gray-400 font-medium">Safe campus transactions.</p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-gradient-to-br from-blue-600 to-blue-800 p-8 rounded-[2rem] text-white shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
-              <WalletIcon size={140} />
-            </div>
-            <div className="relative z-10">
-              <p className="text-blue-100 text-sm font-semibold uppercase tracking-widest mb-2">Total Balance</p>
-              <h2 className="text-4xl font-black mb-8">₦{wallet.balance.toLocaleString()}</h2>
-              <div className="flex items-center gap-2 text-xs bg-white/20 backdrop-blur-md w-fit px-3 py-1.5 rounded-full border border-white/20">
-                <ShieldCheck size={14} />
-                <span>Escrow Secured</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-            <h4 className="font-bold mb-4">Quick Payouts</h4>
-            <div className="space-y-3">
-              <PayoutOption icon={<Banknote />} label="Bank Transfer" time="~2 hours" />
-              <PayoutOption icon={<CreditCard />} label="Paystack Instant" time="Instant" />
-            </div>
-          </div>
+      {/* High Fidelity Balance Card */}
+      <div className="bg-gradient-to-br from-indigo-600 to-blue-800 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-blue-200 relative overflow-hidden group">
+        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
+          <Landmark size={140} />
         </div>
-
-        <div className="lg:col-span-2 bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm flex flex-col">
-          <h4 className="font-bold text-lg mb-6">Balance Over Time</h4>
-          <div className="flex-1 min-h-[250px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorBalance" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fill: '#94a3b8'}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94a3b8'}} />
-                <Tooltip 
-                  contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
-                />
-                <Area type="monotone" dataKey="balance" stroke="#2563eb" strokeWidth={3} fillOpacity={1} fill="url(#colorBalance)" />
-              </AreaChart>
-            </ResponsiveContainer>
+        <div className="relative z-10 space-y-8">
+          <div>
+            <p className="text-blue-100 text-[10px] font-black uppercase tracking-widest mb-1 opacity-80">Available Funds</p>
+            <h2 className="text-4xl font-black tracking-tight">₦{wallet.balance.toLocaleString()}</h2>
+          </div>
+          <div className="flex gap-2">
+            <div className="px-4 py-2 bg-white/10 backdrop-blur-md rounded-2xl text-[10px] font-bold flex items-center gap-2 border border-white/20">
+              <ShieldCheck size={14} className="text-blue-200" />
+              Escrow Active
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-gray-50 flex items-center justify-between">
-          <h4 className="font-bold">Transaction History</h4>
-          <button className="text-sm font-bold text-blue-600 hover:underline">Download CSV</button>
+      {/* Payment Gateway Integration UI */}
+      <div className="space-y-4">
+        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">Deposit Funds</p>
+        <div className="grid grid-cols-1 gap-3">
+          <PaymentProviderButton 
+            onClick={handleAddFunds} 
+            loading={funding} 
+            name="Paystack" 
+            desc="Pay with Card, Bank or Transfer"
+            color="bg-blue-500"
+          />
+          <PaymentProviderButton 
+            onClick={handleAddFunds} 
+            loading={funding} 
+            name="Flutterwave" 
+            desc="Barter, USSD & QR Payments"
+            color="bg-amber-500"
+          />
         </div>
-        <div className="divide-y divide-gray-50">
+      </div>
+
+      {/* History */}
+      <div className="space-y-4 pt-4">
+        <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-2">Transaction History</h3>
+        <div className="space-y-3">
           {wallet.history.map(tx => (
-            <div key={tx.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+            <div key={tx.id} className="flex items-center justify-between p-5 bg-white rounded-3xl border border-gray-100 shadow-sm hover:bg-gray-50 transition-colors">
               <div className="flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
                   tx.type === 'CREDIT' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
                 }`}>
-                  {tx.type === 'CREDIT' ? <ArrowDownLeft size={24} /> : <ArrowUpRight size={24} />}
+                  {tx.type === 'CREDIT' ? <ArrowDownLeft size={20} /> : <ArrowUpRight size={20} />}
                 </div>
                 <div>
-                  <p className="font-bold">{tx.description}</p>
-                  <p className="text-xs text-gray-400">{tx.timestamp}</p>
+                  <p className="text-sm font-black text-gray-900">{tx.description}</p>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase">{tx.timestamp}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className={`text-lg font-black ${
-                  tx.type === 'CREDIT' ? 'text-green-600' : 'text-gray-900'
-                }`}>
-                  {tx.type === 'CREDIT' ? '+' : '-'}₦{tx.amount.toLocaleString()}
-                </p>
-                <p className="text-[10px] text-gray-400 font-bold uppercase">Completed</p>
-              </div>
+              <p className={`text-lg font-black ${tx.type === 'CREDIT' ? 'text-green-600' : 'text-gray-900'}`}>
+                {tx.type === 'CREDIT' ? '+' : '-'}₦{tx.amount.toLocaleString()}
+              </p>
             </div>
           ))}
         </div>
@@ -123,16 +93,22 @@ const WalletView: React.FC<WalletViewProps> = ({ wallet, user }) => {
   );
 };
 
-const PayoutOption: React.FC<{ icon: React.ReactNode, label: string, time: string }> = ({ icon, label, time }) => (
-  <button className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-50 hover:border-blue-100 transition-all text-left">
-    <div className="flex items-center gap-3">
-      <div className="text-gray-400">{icon}</div>
-      <div>
-        <p className="text-sm font-bold text-gray-900">{label}</p>
-        <p className="text-[10px] text-gray-400 uppercase tracking-wider">{time}</p>
+const PaymentProviderButton: React.FC<{ name: string, desc: string, onClick: () => void, loading: boolean, color: string }> = ({ name, desc, onClick, loading, color }) => (
+  <button 
+    onClick={onClick}
+    disabled={loading}
+    className="w-full flex items-center justify-between p-6 bg-white rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-lg transition-all active:scale-[0.98] group"
+  >
+    <div className="flex items-center gap-4">
+      <div className={`w-14 h-14 ${color} rounded-2xl flex items-center justify-center text-white shadow-lg`}>
+        <CreditCard size={28} />
+      </div>
+      <div className="text-left">
+        <p className="text-lg font-black text-gray-900">{name}</p>
+        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">{desc}</p>
       </div>
     </div>
-    <Plus size={18} className="text-gray-300" />
+    {loading ? <Loader2 className="animate-spin text-gray-300" /> : <Plus className="text-gray-300 group-hover:text-blue-600 transition-colors" />}
   </button>
 );
 

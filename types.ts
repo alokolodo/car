@@ -5,16 +5,19 @@ export enum UserRole {
 }
 
 export enum RideStatus {
+  REQUESTING = 'REQUESTING',
+  MATCHED = 'MATCHED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
   WAITING = 'WAITING',
-  FULL = 'FULL',
-  STARTED = 'STARTED',
-  COMPLETED = 'COMPLETED'
+  FULL = 'FULL'
 }
 
 export enum VehicleType {
   TRICYCLE = 'TRICYCLE',
   CAR = 'CAR',
-  BUS = 'BUS'
+  BUS = 'BUS',
+  ANY = 'ANY'
 }
 
 export interface User {
@@ -23,19 +26,12 @@ export interface User {
   email: string;
   phone: string;
   isVerified: boolean;
-  profilePic?: string;
   role: UserRole;
-  verificationStatus: 'PENDING' | 'APPROVED' | 'REJECTED' | 'NOT_STARTED';
-}
-
-export interface Vehicle {
-  id: string;
-  driverId: string;
-  type: VehicleType;
-  baseCapacity: number;
-  allowExtra: boolean;
-  totalCapacity: number;
-  plateNumber: string;
+  isOnline?: boolean;
+  routeRefillEnabled?: boolean;
+  profilePic?: string;
+  // Added optional property used in Verification.tsx
+  verificationStatus?: string;
 }
 
 export interface Ride {
@@ -43,6 +39,7 @@ export interface Ride {
   driverId: string;
   driverName: string;
   vehicleType: VehicleType;
+  // Changed from pickup to origin to match usage in components
   origin: string;
   destination: string;
   totalSeats: number;
@@ -52,9 +49,7 @@ export interface Ride {
 }
 
 export interface Wallet {
-  userId: string;
   balance: number;
-  type: UserRole;
   history: Transaction[];
 }
 
